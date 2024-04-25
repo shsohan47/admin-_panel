@@ -32,6 +32,7 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import authStore from 'store/store/authStore';
 import { useNavigate } from 'react-router';
 import error from "../../../../utils/responseMessage"
+// import apiService from "../../../../services/authService"
 //import state managment
 
 
@@ -55,7 +56,12 @@ const navigate = useNavigate();
   {
     e.preventDefault();
     try{
+      
       await store.login()
+
+      //  const token = store.token;
+      
+      // apiService.setAccessToken(token);
       setSignInSuccess(true);
       setErrorMessage('')
     }catch(err)
@@ -167,7 +173,7 @@ useEffect(()=>
         }}
       >
         {({ errors, handleBlur, isSubmitting, touched }) => (
-          <form noValidate onSubmit={handleSubmit}>
+          <form noValidate onSubmit={(e)=> handleSubmit(e)}>
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
               <OutlinedInput

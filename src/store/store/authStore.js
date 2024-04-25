@@ -1,5 +1,6 @@
 //import axios for api handle in frontend
 import axios from "axios";
+import { apiService } from "services/authService";
 //import zustand
 import create from "zustand";
 
@@ -8,6 +9,7 @@ const authStore = create((set)=>
 ({
     //login state
     isLogin: null,
+    token: "",
     //define initial login form
     loginForm: {
         email: "",
@@ -29,9 +31,15 @@ const authStore = create((set)=>
     },
     login: async()=>
     {
+        console.log("hi")
        
-            const{loginForm} = authStore.getState();
-            const response = await axios.post("/login",loginForm)
+        const{loginForm} = authStore.getState();
+            const response = await axios.post("/login",loginForm);
+            
+            set(()=> ({ token: response?.data?.token})
+            )
+            apiService.setAccessToken( response?.data?.token);
+            
             set({isLogin:true});
 
             if(response.data.error)

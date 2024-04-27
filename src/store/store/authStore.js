@@ -15,6 +15,12 @@ const authStore = create((set)=>
         email: "",
         Password: "",
     },
+    registrationForm:
+    {
+        email: "",
+        Password: "",
+        ConfirmPassword:"",
+    },
     //update login info from frontend
     updateLoginForm:(e)=>
     {
@@ -24,14 +30,27 @@ const authStore = create((set)=>
     {
         return{
             loginForm: {
-                ...state.loginForm,[name]:value
+                ...state.loginForm,
+                [name]:value
+            }
+        }
+    })
+    },
+    updateRegistrationForm: (e)=>
+    {
+        const{name,value} = e.target;
+        set((state)=>
+    {
+        return {
+            registrationForm:{
+                ...state.registrationForm,[name]:value
             }
         }
     })
     },
     login: async()=>
     {
-        console.log("hi")
+       
        
         const{loginForm} = authStore.getState();
             const response = await axios.post("/login",loginForm);
@@ -54,7 +73,29 @@ const authStore = create((set)=>
                 Password:""
             }
         })
+    },
+
+    registration: async () => {
+        
+            const { registrationForm } = authStore.getState();
+           const response =  await axios.post("/signup", registrationForm);
+        
+            if(response.data.error)
+            {
+                const errorMessage = response.data.error;
+                throw new Error(errorMessage)
+            }
+            set({
+                registrationForm:{
+                    email: authStore.registrationForm.getState().email,
+                    Password: "",
+                    ConfirnPassword:"",
+                }
+            })
+        
     }
+
+
 }));
 
 export default authStore;

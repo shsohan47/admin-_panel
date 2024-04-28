@@ -9,6 +9,7 @@ const authStore = create((set)=>
 ({
     //login state
     isLogin: null,
+    isRegister: null,
     token: "",
     //define initial login form
     loginForm: {
@@ -51,8 +52,9 @@ const authStore = create((set)=>
     login: async()=>
     {
        
-       
+       try{
         const{loginForm} = authStore.getState();
+        console.log("loginForm:",loginForm)
             const response = await axios.post("/login",loginForm);
             
             set(()=> ({ token: response?.data?.token})
@@ -60,38 +62,55 @@ const authStore = create((set)=>
             apiService.setAccessToken( response?.data?.token);
             
             set({isLogin:true});
-
-            if(response.data.error)
+            set({
+                loginForm:{
+                    email:"",
+                    Password:""
+                }
+            })
+        }catch(error)
+        {
+            set({
+                loginForm:{
+                    email:"",
+                    Password:""
+                }
+            })
+            set({isLogin:false});
+            if(error)
             {
-                const errorMessage = response.data.error
-                throw new Error(errorMessage)
+                throw error
             }
-        
-        set({
-            loginForm:{
-                email:"",
-                Password:""
-            }
-        })
+            //console.log("hi")
+            
+        }
     },
 
     registration: async () => {
-        
+            try{
             const { registrationForm } = authStore.getState();
-           const response =  await axios.post("/signup", registrationForm);
-        
-            if(response.data.error)
+            await axios.post("/signup", registrationForm);
+            set({isRegister:true})
+
+            }catch(error)
             {
-                const errorMessage = response.data.error;
-                throw new Error(errorMessage)
+                
+                set({
+                    registrationForm:{
+                        email: authStore.getState().registrationForm.email,
+                        Password: "",
+                        ConfirmPassword:"",
+                    }
+                })
+                
+                set({isRegister:false});
+                if(error)
+            {
+                throw error
+               
             }
-            set({
-                registrationForm:{
-                    email: authStore.registrationForm.getState().email,
-                    Password: "",
-                    ConfirnPassword:"",
-                }
-            })
+            
+            }
         
     }
 

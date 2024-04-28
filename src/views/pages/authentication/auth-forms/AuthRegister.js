@@ -39,8 +39,6 @@ const FirebaseRegister = () => {
   const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false);
   const store = authStore();
-
-  const [signupSuccess,setSignUpSuccess] = useState(false);
   const [errorMessage,setErrorMessage] = useState("")
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -58,23 +56,22 @@ const FirebaseRegister = () => {
     e.preventDefault()
     try{
       await store.registration();
-      setSignUpSuccess(true);
+      // setSignUpSuccess(true);
       setErrorMessage("")
     }catch(err)
     {
       const errorMessage = error(err);
       setErrorMessage(errorMessage);
-      setSignUpSuccess(false);
+      // setSignUpSuccess(false);
     }
   }
 
   useEffect(() => {
-    
-    if(signupSuccess)
+    if(store.isRegister)
     {
-      navigate("/free/pages/login/login3")
+      navigate("/pages/login/login3")
     }
-  }, [signupSuccess,navigate]);
+  }, [store.isRegister,navigate]);
 
   return (
     <>
@@ -125,22 +122,18 @@ const FirebaseRegister = () => {
         {({ errors, handleBlur, isSubmitting, touched }) => (
           <form noValidate onSubmit={handleSubmit}>
            
-            <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
+            <FormControl fullWidth  sx={{ ...theme.typography.customInput }}>
               <InputLabel htmlFor="outlined-adornment-email-register">Email Address / Username</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-register"
                 type="email"
-                value={store.registration.email}
+                value={store.registrationForm.email}
                 name="email"
                 onBlur={handleBlur}
                 onChange={store.updateRegistrationForm}
                 inputProps={{}}
               />
-              {touched.email && errors.email && (
-                <FormHelperText error id="standard-weight-helper-text--register">
-                  {errors.email}
-                </FormHelperText>
-              )}
+              
             </FormControl>
 
             <FormControl fullWidth error={Boolean(touched.password && errors.password)} sx={{ ...theme.typography.customInput }}>
@@ -148,7 +141,7 @@ const FirebaseRegister = () => {
               <OutlinedInput
                 id="outlined-adornment-password-register"
                 type={showPassword ? 'text' : 'password'}
-                value={store.registration.Password}
+                value={store.registrationForm.Password}
                 name="Password"
                 label="Password"
                 onBlur={handleBlur}
@@ -174,7 +167,7 @@ const FirebaseRegister = () => {
               <OutlinedInput
                 id="outlined-adornment-password-register"
                 type={showPassword ? 'text' : 'password'}
-                value={store.registration.ConfirmPassword}
+                value={store.registrationForm.ConfirmPassword}
                 name="ConfirmPassword"
                 label="Confirm Password"
                 onBlur={handleBlur}

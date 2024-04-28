@@ -4,7 +4,6 @@ class ApiService{
 setAccessToken = (token)=>
 {
     localStorage.setItem(token_key,token);
-    console.log("myToken:", token)
 }
 }
 
